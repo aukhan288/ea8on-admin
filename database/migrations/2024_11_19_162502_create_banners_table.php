@@ -1,0 +1,38 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('banners', function (Blueprint $table) {
+            $table->id();
+            $table->text('banner_img')->collation('latin1_swedish_ci');
+
+   
+
+            // 'status' column (integer, non-nullable, default value 1)
+            // 1 for active, 0 for inactive
+            $table->integer('status')->default(1);
+
+            // Add timestamps (created_at, updated_at) for record tracking
+            $table->timestamps();
+
+           
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('banners');
+    }
+};
