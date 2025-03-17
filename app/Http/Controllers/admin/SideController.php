@@ -39,12 +39,14 @@ class SideController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'description' => 'sometimes|string',
         ]);
 
         $side = new Side();
         $side->name = $validated['name'];
         $side->price = $validated['price'];
+        $side->description = $validated['description'];
 
         // Handle image upload
         if ($request->hasFile('image')) {
