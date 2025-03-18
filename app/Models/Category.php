@@ -15,5 +15,7 @@ class Category extends Model
         'category_img_1',
         'category_img_2',
         'category_img_3',
+        'status',
+        'description',
     ];
 }

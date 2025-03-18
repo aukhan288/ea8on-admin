@@ -27,6 +27,7 @@ return new class extends Migration
             $table->text('ref_code')->nullable(); // Nullable text field for reference code
             $table->integer('is_delete')->default(0); // Integer field with default value 0
             $table->bigInteger('role_id'); // Allow NULL and add foreign key
+            $table->rememberToken();
             $table->timestamps(); // Laravel's created_at and updated_at fields
             $table->softDeletes();
         });
