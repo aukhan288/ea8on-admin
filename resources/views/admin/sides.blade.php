@@ -47,7 +47,7 @@
           <!-- Price -->
           <div class="mb-3">
             <label for="sidePrice" class="form-label">Price <span class="text-danger">*</span></label>
-            <input type="number" class="form-control" name="price" id="sidePrice" placeholder="Price" />
+            <input type="number" step="any" class="form-control" name="price" id="sidePrice" placeholder="Price" />
           </div>
 
           <!-- Status Checkbox -->

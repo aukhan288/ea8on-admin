@@ -29,7 +29,7 @@ Route::prefix('/admin')->group(function () {
     Route::get('/categoryList', [CategoryController::class, 'categoryList'])->name('categoryList'); // Fetch categories for AJAX
     Route::post('/category/store', [CategoryController::class, 'store'])->name('category.store'); // Create category
     Route::get('/category/{id}/edit', [CategoryController::class, 'edit'])->name('category.edit'); // Edit category
-    Route::post('/category/{id}/update', [CategoryController::class, 'update'])->name('category.update'); // Update category
+    Route::put('/category/{id}', [CategoryController::class, 'update'])->name('category.update'); // Update category
     Route::delete('/category/{id}/destroy', [CategoryController::class, 'destroy'])->name('category.destroy'); // Delete category
 
     Route::get('/sub-categories', [SubCategoryController::class, 'index'])->name('sub-category.index'); // Show all categories
