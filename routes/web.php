@@ -19,14 +19,12 @@ use App\Http\Controllers\admin\SideController;
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::prefix('/admin')->group(function () {
-
-    
-
+    Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::get('/categories', [CategoryController::class, 'index'])->name('category.index'); // Show all categories
     Route::get('/categoryList', [CategoryController::class, 'categoryList'])->name('categoryList'); // Fetch categories for AJAX
+    Route::get('categories-list', [CategoryController::class, 'categories'])->name('categories.list');
     Route::post('/category/store', [CategoryController::class, 'store'])->name('category.store'); // Create category
     Route::get('/category/{id}/edit', [CategoryController::class, 'edit'])->name('category.edit'); // Edit category
     Route::put('/category/{id}', [CategoryController::class, 'update'])->name('category.update'); // Update category
@@ -49,9 +47,12 @@ Route::prefix('/admin')->group(function () {
 
 
 
-    Route::get('/products', [ProductController::class, 'index'])->name('product.index'); // Show all categories
-    Route::get('/productList', [ProductController::class, 'ProductList'])->name('productList'); // Fetch categories for AJAX
-    Route::post('/product', [ProductController::class, 'store'])->name('product.store'); // Create category
+    Route::get('products', [ProductController::class, 'index'])->name('product.index'); // Show all categories
+    Route::get('productList', [ProductController::class, 'ProductList'])->name('productList'); // Fetch categories for AJAX
+    Route::post('product-create', [ProductController::class, 'store'])->name('product.store'); // Create category
+    Route::get('product/{id}', [ProductController::class, 'show']);
+    Route::put('product/{id}', [ProductController::class, 'update']);
+    Route::delete('product/{id}', [ProductController::class, 'destroy'])->name('product.destroy');
     // Route::get('/sub-category/{id}/edit', [SubCategoryController::class, 'edit'])->name('sub-category.edit'); // Edit category
     // Route::post('/sub-category/{id}/update', [SubCategoryController::class, 'update'])->name('sub-category.update'); // Update category
     // Route::delete('/sub-category/{id}/destroy', [SubCategoryController::class, 'destroy'])->name('sub-category.destroy'); // Delete category
@@ -63,7 +64,7 @@ Route::prefix('/admin')->group(function () {
     Route::post('/banner/{id}', [BannerController::class, 'update'])->name('banner.update'); // Update category
     Route::delete('/banner/{id}', [BannerController::class, 'destroy'])->name('banner.destroy'); // Delete category
     
-    Route::get('/users', [UserController::class, 'index'])->name('user.index'); // Show all categories
+    Route::get('/customers', [UserController::class, 'index'])->name('user.index'); // Show all categories
     Route::get('/userList', [UserController::class, 'userList'])->name('userList'); // Fetch categories for AJAX
     Route::post('/user/store', [UserController::class, 'store'])->name('user.store'); // Create category
     Route::get('/user/{id}', [UserController::class, 'edit'])->name('user.edit'); // Edit category

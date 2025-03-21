@@ -20,8 +20,6 @@ class CreateProductsTable extends Migration
             // Create 'product_name' column (text, non-nullable, with latin1_swedish_ci collation)
             $table->text('product_name')->collation('latin1_swedish_ci');
 
-            // Create 'brand_name' column (text, non-nullable, with latin1_swedish_ci collation)
-            $table->text('brand_name')->collation('latin1_swedish_ci');
 
             // Create 'category_id' column (foreign key to 'categories' table)
             $table->unsignedBigInteger('category_id');
@@ -49,23 +47,12 @@ class CreateProductsTable extends Migration
             $table->text('img_2')->nullable()->collation('latin1_swedish_ci');
             $table->text('img_3')->nullable()->collation('latin1_swedish_ci');
 
-            // Create 'tag' column (longtext, nullable, with latin1_swedish_ci collation)
-            $table->longText('tag')->nullable()->collation('latin1_swedish_ci');
-
-            // Create 'date' column (datetime, non-nullable)
-            $table->datetime('date');
-
-            // Create 'discount' column (integer, non-nullable, default value 0)
-            $table->integer('discount')->default(0);
-
-            // Create 'popular' column (integer, non-nullable)
-            $table->integer('popular');
 
             // Create 'dealOfTheDay' column (integer, non-nullable, default value 0)
             $table->integer('dealOfTheDay')->default(0);
 
             // Create 'is_delete' column (integer, nullable)
-            $table->integer('is_delete')->nullable();
+            $table->timestamp('deleted_at')->nullable();
 
             // Add foreign key constraints
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');

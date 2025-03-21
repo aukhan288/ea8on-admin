@@ -17,20 +17,18 @@ class Product extends Model
         'category_img_3',
     ];
 
-    public function sizes()
-    {
-        return $this->hasMany(ProductSize::class);
-    }
-    public function flavours()
-    {
-        return $this->hasMany(ProductFlavour::class);
-    }
-    public function ingredients()
-    {
-        return $this->hasMany(Ingredient::class);
-    }
+
+
     public function sides()
     {
-        return $this->hasMany(ProductSide::class);
+        return $this->belongsToMany(Side::class, 'product_sides')->withTimestamps();
     }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    
+
 }
