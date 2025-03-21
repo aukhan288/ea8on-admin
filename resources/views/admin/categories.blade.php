@@ -107,13 +107,19 @@ $(document).ready(function() {
     responsive: true,
     processing: true,
     serverSide: true,
-    stateSave:  true,
+    stateSave: true,
     ajax: {
-        url: "/admin/categoryList",
+        url: "/admin/categories-list", 
         type: "GET",
+        data: function(d) {
+            d.search = d.search.value;  // Send search value
+            d.start = d.start;  // Pagination start index
+            d.length = d.length;  // Number of records per page
+            d.order = d.order[0];  // Sorting column info
+        },
         dataSrc: function(json) {
-            console.log(json); // Log the response to check the structure
-            return json.categories; // Ensure 'categories' is the key returned by the server
+            console.log(json); 
+            return json.data; // Ensure 'data' matches server response
         }
     },
     columns: [
@@ -121,9 +127,9 @@ $(document).ready(function() {
             title: 'Thumbnail',
             data: 'category_img',
             render: function(data) {
-                return data ? 
-                    `<img style="height:40px; width:40px; border-radius:100px" src="{{ url('/') }}/storage/${data}" alt="Category Thumbnail">` :
-                    '<span>No Image</span>';
+                return data 
+                    ? `<img style="height:40px; width:40px; border-radius:100px" src="/storage/${data}" alt="Category Thumbnail">`
+                    : '<span>No Image</span>';
             }
         },
         { title: 'Name', data: 'category_name' },
@@ -149,41 +155,49 @@ $(document).ready(function() {
     ],
     pageLength: 10,
     lengthMenu: [5, 10, 25, 50],
-    pagingType: "simple_numbers"
-  });
+    pagingType: "simple_numbers",
+    order: [[1, 'asc']],
+});
+
+
 })
 $('#categoryForm').submit(function (e) {
     e.preventDefault();
-
-    let id = $('#categoryId').val();  // Get the category ID (if it's an update)
+    let id = $('#categoryId').val(); // Get the category ID (if it's an update)
     let formData = new FormData(this); // Prepare form data, including images
-    var url = id ? `/admin/category/${id}` : '/admin/category/store'; // Dynamically set the URL based on edit or create
-    var method = id ? 'PUT' : 'POST'; // Use PUT for updates, POST for new category
+
+    // Dynamically set the URL based on edit or create
+    var url = id ? `/admin/category/${id}` : '/admin/category/store'; 
+    var method = 'POST'; // Always use POST to ensure FormData works correctly
+
+    if (id) {
+        formData.append('_method', 'PUT'); // Laravel will interpret this as a PUT request
+    }
 
     // Reset previous validation states
     $('.form-control').removeClass('is-invalid is-valid');
     $('.invalid-feedback').remove();
 
-    // Append CSRF token ONLY in headers (remove from formData)
+    // Get CSRF token
     var csrfToken = $('meta[name="csrf-token"]').attr('content');
 
     $.ajax({
         url: url,
-        type: method,
+        type: method, // Always use POST
         data: formData,
-        processData: false,  // Don't process data (for file uploads)
-        contentType: false,  // Let jQuery figure out the content type
+        processData: false,  // Don't process FormData
+        contentType: false,  // Let the browser set content type
         headers: {
-            'X-CSRF-TOKEN': csrfToken  // Send the CSRF token in the header
+            'X-CSRF-TOKEN': csrfToken  // CSRF token in header
         },
         success: function (response) {
-            $('#categoryModal').modal('hide');
-            $('#storesTable').DataTable().ajax.reload(); // Reload the table dynamically with new data
-            console.log('Updated Category:', response.category);  // Log the updated category for debugging
+            $('#categoryModal').modal('hide'); // Hide modal on success
+            $('#categoriesTable').DataTable().ajax.reload(); // Reload table dynamically
+            
         },
         error: function (xhr) {
             if (xhr.status === 422) {
-                // Validation error
+                // Handle Laravel validation errors
                 let errors = xhr.responseJSON.errors;
                 $.each(errors, function (key, messages) {
                     let inputField = $('[name="' + key + '"]');
@@ -191,11 +205,12 @@ $('#categoryForm').submit(function (e) {
                     inputField.after(`<div class="invalid-feedback">${messages[0]}</div>`);
                 });
             } else {
-                console.error(xhr.responseText);  // Log any other errors
+                console.error(xhr.responseText); // Log any other errors
             }
         }
     });
 });
+
 
 function categoryDetail(id, action) {
     $('#categoryModal').modal('show');
@@ -215,10 +230,10 @@ function categoryDetail(id, action) {
             success: function(data) {
                 console.log(data);
                 // Assuming the data contains category details in the 'category' property
-                $('#categoryId').val(data.category.id);
-                $('#name').val(data.category.category_name);
-                $('#description').val(data.category.description);
-                $('#status').prop('checked', data.category.status);
+                $('#categoryId').val(data?.category?.id);
+                $('#name').val(data?.category?.category_name);
+                $('#description').val(data?.category?.description);
+                $('#status').prop('checked', data?.category?.status);
                 // Optionally, you can populate the images if necessary
                 // $('#category_img').val(data.category.category_img); // if you need to display images
             },

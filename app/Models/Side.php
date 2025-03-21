@@ -11,4 +11,10 @@ class Side extends Model
 
     // Allow mass assignment for these fields
     protected $fillable = ['name', 'description', 'image', 'price', 'status']; 
+
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'product_sides')->withTimestamps();
+    }
+
 }

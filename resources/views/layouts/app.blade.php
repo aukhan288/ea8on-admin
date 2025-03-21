@@ -23,6 +23,7 @@
   <!-- Template Main CSS File -->
   <link href="{{ asset('css/datatable.css') }}" rel="stylesheet">
   <link href="{{ asset('css/sweetalert2.css') }}" rel="stylesheet">
+  <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet">
   <link href="{{ asset('css/style.css') }}" rel="stylesheet">
   <script src="{{ asset('js/jquery.min.js') }}"></script>
   <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
@@ -30,6 +31,7 @@
   <script src="{{ asset('js/popper.min.js') }}"></script>
   <script src="{{ asset('js/datatable.js') }}"></script>
   <script src="{{ asset('js/sweetalert2.js') }}"></script>
+  <script src="{{ asset('js/select2.min.js') }}"></script>
   <script src="{{ asset('js/main.js') }}"></script>
   <style>
 .dt-paging {
@@ -180,7 +182,7 @@ div.dt-container .dt-paging .dt-paging-button {
     <ul class="sidebar-nav" id="sidebar-nav">
 
       <li class="nav-item" >
-        <a class="nav-link  collapsed " href="{{ url('/admin/home') }}">
+        <a class="nav-link  {{ request()->is('admin') ? 'current' : '' }} " href="{{ url('/admin') }}">
           <i class="bi bi-grid"></i>
           <span>Dashboard</span>
         </a>
@@ -191,12 +193,12 @@ div.dt-container .dt-paging .dt-paging-button {
           <span>Category</span>
         </a>
       </li><!-- End Dashboard Nav -->
-      <li class="nav-item" >
+      <!-- <li class="nav-item" >
         <a class="nav-link collapsed" href="{{ url('/admin/sub-categories') }}">
         <i class="bi bi-list"></i>
           <span>Sub Category</span>
         </a>
-      </li><!-- End Dashboard Nav -->
+      </li> End Dashboard Nav -->
       
       <li class="nav-item">
         <a class="nav-link  {{ request()->is('admin/products') ? 'current' : '' }}" href="{{ url('/admin/products') }}">
@@ -205,32 +207,32 @@ div.dt-container .dt-paging .dt-paging-button {
         </a>
       </li><!-- End Dashboard Nav -->
       <li class="nav-item">
-        <a class="nav-link  {{ request()->is('admin/sides') ? '' : 'collapsed' }}" href="{{ url('/admin/sides') }}">
+        <a class="nav-link  {{ request()->is('admin/sides') ? 'current' : '' }}" href="{{ url('/admin/sides') }}">
           <i class="bi bi-people"></i>
           <span>Sides</span>
         </a>
       </li><!-- End Dashboard Nav -->
       <li class="nav-item" >
-        <a class="nav-link {{ request()->is('admin/banners') ? '' : 'collapsed' }}" href="{{ url('/admin/banners') }}">
+        <a class="nav-link {{ request()->is('admin/banners') ? 'current' : '' }}" href="{{ url('/admin/banners') }}">
         <i class="bi bi-list"></i>
           <span>Banners</span>
         </a>
       </li><!-- End Dashboard Nav -->
       <li class="nav-item">
-        <a class="nav-link  {{ request()->is('admin/users') ? '' : 'collapsed' }}" href="{{ url('/admin/users') }}">
+        <a class="nav-link  {{ request()->is('admin/customers') ? 'current' : '' }}" href="{{ url('/admin/customers') }}">
           <i class="bi bi-people"></i>
           <span>Customers</span>
         </a>
       </li><!-- End Dashboard Nav -->
       
       <li class="nav-item">
-        <a class="nav-link collapsed" href="{{ url('/admin/orders') }}">
+        <a class="nav-link {{ request()->is('admin/orders') ? 'current' : '' }}" href="{{ url('/admin/orders') }}">
           <i class="bi bi-people"></i>
           <span>Orders</span>
         </a>
       </li><!-- End Dashboard Nav -->
       <li class="nav-item">
-        <a class="nav-link collapsed" href="{{ url('/admin/delivery-boys') }}">
+        <a class="nav-link {{ request()->is('admin/delivery-boys') ? 'current' : '' }}" href="{{ url('/admin/delivery-boys') }}">
           <i class="bi bi-people"></i>
           <span>Delivery Boys</span>
         </a>

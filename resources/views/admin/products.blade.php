@@ -1,9 +1,23 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+    .select2-img {
+    width: 30px;
+    height: 30px;
+    border-radius: 5px;
+    margin-right: 5px;
+}
+
+.select2-img-selected {
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    margin-right: 3px;
+}
+</style>
 <div class="d-flex justify-content-between mb-3">
-    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#productModal"
-        data-action="create">Add New</button>
+    <button class="btn btn-primary btn-sm" onclick="productDetail(-1,'create')">Add New</button>
 </div>
 
 <section class="section">
@@ -41,95 +55,95 @@
             <div class="modal-body">
                 <form id="productForm" action="" method="POST" enctype="multipart/form-data">
                     @csrf
-                  
-                    
-
-                    <ul class="nav nav-tabs" id="myTab" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="productDetail-tab" data-bs-toggle="tab"
-                                data-bs-target="#productDetail" type="button" role="tab" aria-controls="productDetail"
-                                aria-selected="true">Product Detail</button>
-                        </li>
-                    </ul>
-
-                    <div class="tab-content" id="myTabContent">
-                        <div class="tab-pane fade show active" id="productDetail" role="tabpanel"
-                            aria-labelledby="productDetail-tab">
                             <div class="row">
-                        <div class="col-sm-4">
+                        <div class="col-sm-6">
                             <div class="mb-3">
                                 <label for="name" class="form-label">Product Name</label>
                                 <input type="text" class="form-control" id="name" name="name" required>
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="mb-3">
-                                <label for="price" class="form-label">Price</label>
-                                <input type="number" class="form-control" id="price" name="price" required>
+                                <label for="price" class="form-label">Sandwich Price</label>
+                                <input type="number" step="any" class="form-control" id="sandwich_price" name="sandwich_price" required>
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                         <div class="mb-3">
-                                <label for="discount" class="form-label">Discount</label>
-                                <input type="text" class="form-control" id="discount" name="discount" required>
+                                <label for="discount" class="form-label">Meal Price</label>
+                                <input type="number" step="any" class="form-control" id="meal_price" name="meal_price" required>
                             </div>
                         </div>
                     </div>
 
                     <div class="row">
-                        <div class="col-sm-4">
+                    <div class="col-sm-6">
                             <div class="mb-3">
                                 <label for="category" class="form-label">Category</label>
-                                <select class="form-select" id="category" name="category_id" required>
-                                    <option value="" selected>Choose Category</option>
-                                    @foreach ($categories as $category )
-                                    <option value="{{ $category?->id }}">{{ $category?->category_name }}</option>
-                                    @endforeach
+                                <select class="form-select" id="category" name="category_id">
                                 </select>
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-2 d-flex align-items-center">
+                         <div class="">
+                         <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="1" id="has_sides"
+                                        name="has_sides">
+                                    <label class="form-check-label ms-2" for="has_sides">
+                                        Add sides
+                                    </label>
+                                </div>
+                         </div>
+                        </div>           
+                    </div>
+                    <div class="row" id="sidesRow" style="display:none">
+                    <div class="col-sm-6">
                             <div class="mb-3">
-                                <label for="sub_category" class="form-label">Sub Category</label>
-                                <select class="form-select" id="sub_category" name="sub_category_id">
-                                    <option value="" selected>Choose Sub Category</option>
+                                <label for="sides" class="form-label">Sides</label>
+                                <select class="form-select" id="sides" name="sides[]">
                                 </select>
                             </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="mb-3">
-                                <label for="unit" class="form-label">Unit <small>(Gms, kg, ltr, ml, pcs)</small></label>
-                                <input type="text" class="form-control" id="unit" name="unit" required>
-                            </div>
+                        </div> 
+                        <div class="col-sm-3">
+                        <div class="mb-3"  id="number_of_free_sides">
+                             <label for="img_1" class="form-label">Free Sides</label>
+                             <input type="number" class="form-control" id="free_sides" name="number_of_free_sides" 
+                                placeholder="Free Sides">
+                         </div>
                         </div>
                     </div>
 
                    
-
+                   
                  
                     <div class="row">
-                        <div class="col-sm-3">
+                        <div class="col-sm-4 ">
                          <div class="mb-3">
                              <label for="main_img" class="form-label">Product Image</label>
                              <input type="file" class="form-control" name="main_img[]" value=""
                                 placeholder="Chose Image" required>
                          </div>
+                         <div id="imagePreviewContainer" class="mb-3" style="display: none;">
+                            <img id="imagePreview" src="" alt="Image Preview" style="width: 100%; height: 200px;" />
                         </div>
-                        <div class="col-sm-3">
+                        </div>
+                    </div>
+                    <div class="row">
+                    <div class="col-sm-4">
                         <div class="mb-3">
                              <label for="img_1" class="form-label">Slider One</label>
                              <input type="file" class="form-control" name="img_1[]" value=""
                                 placeholder="Chose Image" required>
                          </div>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-4">
                          <div class="mb-3">
                              <label for="img_2" class="form-label">Slider Two</label>
-                             <input type="file" class="form-control" name="imag_2[]" value=""
+                             <input type="file" class="form-control" name="img_2[]" value=""
                                 placeholder="Chose Image" required>
                          </div>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-4">
                         <div class="mb-3">
                              <label for="img_3" class="form-label">Slider Three</label>
                              <input type="file" class="form-control" name="img_3[]" value=""
@@ -137,28 +151,7 @@
                          </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-sm-6">
-                         <div class="mb-3">
-                         <div class="form-check d-flex">
-                                    <input class="form-check-input" type="checkbox" value="1" id="sidesInToGoWith"
-                                        name="sidesInToGoWith">
-                                    <label class="form-check-label ms-2" for="sidesInToGoWith">
-                                        Add sides in To Go With
-                                    </label>
-                                </div>
-                         </div>
-                        </div>
-                        <div class="col-sm-3">
-                        <div class="mb-3" style="display:none" id="numberSidesInToGoWith">
-                             <label for="img_1" class="form-label">Number of Sides</label>
-                             <input type="number" class="form-control" name="numberSidesInToGoWith[]" value=""
-                                placeholder="Chose Image" required>
-                         </div>
-                        </div>
-                  
-                       
-                    </div>
+                    
                     <div class="row">
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
@@ -169,10 +162,10 @@
                         <div class="col-sm-3">
                             <div class="mb-3">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="1" id="out_of_stock"
-                                        name="out_of_stock">
-                                    <label class="form-check-label" for="out_of_stock">
-                                        Out Of Stock
+                                    <input class="form-check-input" type="checkbox" value="1" id="stock"
+                                        name="stock" checked>
+                                    <label class="form-check-label" for="stock">
+                                        Stock
                                     </label>
                                 </div>
                             </div>
@@ -191,17 +184,6 @@
                         <div class="col-sm-3">
                             <div class="mb-3">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="1" id="publish"
-                                        name="publish">
-                                    <label class="form-check-label" for="publish">
-                                        Publish
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-3">
-                            <div class="mb-3">
-                                <div class="form-check">
                                     <input class="form-check-input" type="checkbox" value="1" id="deal_of_the_day"
                                         name="deal_of_the_day">
                                     <label class="form-check-label" for="deal_of_the_day">
@@ -209,8 +191,6 @@
                                     </label>
                                 </div>
                             </div>
-                        </div>
-                    </div>
                         </div>
                     </div>
                     </div>
@@ -224,283 +204,72 @@
         </div>
     </div>
 </div>
+<!-- View Modal -->
+<div class="modal fade" id="viewProductModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog"
+    aria-labelledby="modalTitleId" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered " role="document">
+        <div class="modal-content" style="min-height: 80vh !important;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitleId">Add New Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                    <div class="row">
+                    <div class="col-sm-6">
+                       <p><strong>Name:</strong> <span id="productName"></span></p>
+                       <p><strong>Status:</strong> <span id="productStatus"></span></p>
+                       <p><strong>Sandwich Price: </strong> <span id="sandwichPrice"></span></p>
+                       <p><strong>Meal Price: </strong> <span id="mealPrice"></span></p>
+                       <p><strong>Category: </strong> <span id="productCategory"></span></p>
+                    </div>
+                    <div class="col-sm-6">
+                        <span id="productImage">
+
+                        </span>
+                    </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                        <div id="demo" class="carousel slide" data-bs-ride="carousel">
+
+                        <!-- Indicators/dots -->
+                        <div class="carousel-indicators">
+                        <button type="button" data-bs-target="#demo" data-bs-slide-to="0" class="active"></button>
+                        <button type="button" data-bs-target="#demo" data-bs-slide-to="1"></button>
+                        <button type="button" data-bs-target="#demo" data-bs-slide-to="2"></button>
+                        </div>
+
+                        <!-- The slideshow/carousel -->
+                        <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <img id="img1" src="" alt="Los Angeles" class="d-block" style="width:100%; height: 200px;">
+                        </div>
+                        <div class="carousel-item">
+                            <img id="img2" src="" alt="Chicago" class="d-block" style="width:100%; height: 200px;">
+                        </div>
+                        <div class="carousel-item">
+                            <img id="img3" src="" alt="New York" class="d-block" style="width:100%; height: 200px;">
+                        </div>
+                        </div>
+
+                        </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
 $(document).ready(function() {
-    // Add ingredient row
-    // $('#add-ingredient').on('click', function() {
-    //     const ingredientRow = `
-    //         <div class="ingredient-row mb-3 row">
-    //            <div class="col-sm-3">
-    //                <div class="mb-3">
-    //                    <label for="ingredient_image" class="form-label">Image</label>
-    //                    <input type="file" class="form-control" name="ingredient_image[]" required>
-    //                </div>
-    //            </div>
-    //            <div class="col-sm-2">
-    //                <div class="mb-3">
-    //                    <label for="ingredient_name" class="form-label">Name</label>
-    //                    <input type="text" class="form-control" name="ingredient_name[]" placeholder="Name" required>
-    //                </div>
-    //            </div>
-    //            <div class="col-sm-2">
-    //                <div class="mb-3">
-    //                    <label for="ingredient_price" class="form-label">Price</label>
-    //                    <input type="number" class="form-control" name="ingredient_price[]" placeholder="0.00" required>
-    //                </div>
-    //            </div>
-    //            <div class="col-sm-1">
-    //                <div class="mb-3">
-    //                    <label for="ingredient_unit" class="form-label">Unit</label>
-    //                    <input type="text" class="form-control" name="ingredient_unit[]" required>
-    //                </div>
-    //            </div>
-    //            <div class="col-sm-2">
-    //                <button type="button" class="btn btn-danger remove-ingredient" style="margin-top: 28px;">
-    //                    <i class="bi bi-trash"></i>
-    //                </button>
-    //            </div>
-    //         </div>
-    //     `;
-    //     $('#ingredients-list').append(ingredientRow);
-    // });
-
-    // // Remove ingredient row
-    // $('#ingredients-list').on('click', '.remove-ingredient', function() {
-    //     $(this).closest('.ingredient-row').remove();
-    // });
-
-    // // Add side row
-    // $('#add-side').on('click', function() {
-    //     const sideRow = `
-    //         <div class="side-row mb-3 row">
-    //             <div class="col-sm-3">
-    //                 <div class="mb-3">
-    //                     <label for="side_image" class="form-label">Image</label>
-    //                     <input type="file" class="form-control" name="side_image[]" required>
-    //                 </div>
-    //             </div>
-    //             <div class="col-sm-2">
-    //                 <div class="mb-3">
-    //                     <label for="side_name" class="form-label">Name</label>
-    //                     <input type="text" class="form-control" name="side_name[]" placeholder="Name" required>
-    //                 </div>
-    //             </div>
-    //             <div class="col-sm-2">
-    //                 <div class="mb-3">
-    //                     <label for="side_price" class="form-label">Price</label>
-    //                     <input type="number" class="form-control" name="side_price[]" placeholder="0.00" required>
-    //                 </div>
-    //             </div>
-    //             <div class="col-sm-1">
-    //                 <div class="mb-3">
-    //                     <label for="side_unit" class="form-label">Unit</label>
-    //                     <input type="text" class="form-control" name="side_unit[]" required>
-    //                 </div>
-    //             </div>
-    //             <div class="col-sm-2">
-    //                 <button type="button" class="btn btn-danger remove-side" style="margin-top: 28px;">
-    //                     <i class="bi bi-trash"></i>
-    //                 </button>
-    //             </div>
-    //         </div>
-    //     `;
-    //     $('#sides-list').append(sideRow);
-    // });
-
-    // // Remove side row
-    // $(document).on('click', '.remove-side', function() {
-    //     $(this).closest('.side-row').remove();
-    // });
-
-    // // Add size row
-    // $('#add-size').on('click', function() {
-    //     const sizeRow = `
-    //         <div class="size-row mb-3 row">
-    //             <div class="col-sm-2">
-    //                 <div class="mb-3">
-    //                     <label for="size_name" class="form-label">Name</label>
-    //                     <input type="text" class="form-control size_name" name="size_name[]" placeholder="Name" required>
-    //                 </div>
-    //             </div>
-    //             <div class="col-sm-2">
-    //                 <div class="mb-3">
-    //                     <label for="size_price" class="form-label">Price</label>
-    //                     <input type="number" class="form-control size_price" name="size_price[]" placeholder="0.00" required>
-    //                 </div>
-    //             </div>
-    //             <div class="col-sm-3">
-    //                 <button type="button" class="btn btn-danger remove-size" style="margin-top: 28px;">
-    //                     <i class="bi bi-trash"></i>
-    //                 </button>
-    //             </div>
-    //         </div>
-    //     `;
-    //     $('#sizes-list').append(sizeRow);
-    // });
-
-    // // Remove size row
-    // $(document).on('click', '.remove-size', function() {
-    //     $(this).closest('.size-row').remove();
-    // });
-
-    // // Add flavour row
-    // $('#add-flavour').on('click', function() {
-    //     const flavourRow = `
-    //         <div class="flavour-row mb-3 row">
-    //             <div class="col-sm-2">
-    //                 <div class="mb-3">
-    //                     <label for="flavour_name" class="form-label">Name</label>
-    //                     <input type="text" class="form-control" name="flavour_name[]" placeholder="Name" required>
-    //                 </div>
-    //             </div>
-    //             <div class="col-sm-2">
-    //                 <div class="mb-3">
-    //                     <label for="flavour_price" class="form-label">Price</label>
-    //                     <input type="number" class="form-control" name="flavour_price[]" placeholder="0.00" required>
-    //                 </div>
-    //             </div>
-    //             <div class="col-sm-3">
-    //                 <button type="button" class="btn btn-danger remove-flavour" style="margin-top: 28px;">
-    //                     <i class="bi bi-trash"></i>
-    //                 </button>
-    //             </div>
-    //         </div>
-    //     `;
-    //     $('#flavours-list').append(flavourRow);
-    // });
-
-    // // Remove flavour row
-    // $(document).on('click', '.remove-flavour', function() {
-    //     $(this).closest('.flavour-row').remove();
-    // });
-
-    // Handle form submission
-    $('#productForm').on('submit', function(event) {
-        event.preventDefault();
-
-        // Prepare dynamic data (sizes, flavours, sides, ingredients)
-        var sizeData = [];
-        $('#sizes-list .size-row').each(function() {
-            var sizeName = $(this).find('.size_name').val();
-            var sizePrice = $(this).find('.size_price').val();
-            sizeData.push({ name: sizeName, price: sizePrice });
-        });
-
-        var ingredientData = [];
-        $('#ingredients-list .ingredient-row').each(function() {
-            var ingredientName = $(this).find('input[name="ingredient_name[]"]').val();
-            var ingredientPrice = $(this).find('input[name="ingredient_price[]"]').val();
-            var ingredientImage = $(this).find('input[name="ingredient_image[]"]')[0].files[0];
-            var ingredientUnit = $(this).find('input[name="ingredient_unit[]"]').val();
-            ingredientData.push({
-                name: ingredientName,
-                price: ingredientPrice,
-                image: ingredientImage,
-                unit: ingredientUnit
-            });
-        });
-
-        var sideData = [];
-        $('#sides-list .side-row').each(function() {
-            console.log('##################',this);
-            
-            var sideName = $(this).find('input[name="side_name[]"]').val();
-            var sidePrice = $(this).find('input[name="side_price[]"]').val();
-            var sideImage = $(this).find('input[name="side_image[]"]')[0].files[0];
-            var sideUnit = $(this).find('input[name="side_unit[]"]').val();
-            sideData.push({
-                name: sideName,
-                price: sidePrice,
-                image: sideImage,
-                unit: sideUnit
-            });
-        });
-        var toGoWithData = [];
-        $('#toGoWith-list .toGoWith-row').each(function() {
-            console.log('##################',this);
-            
-            var toGoWithName = $(this).find('input[name="toGoWith_name[]"]').val();
-            var toGoWithPrice = $(this).find('input[name="toGoWith_price[]"]').val();
-            var toGoWithImage = $(this).find('input[name="toGoWith_image[]"]')[0].files[0];
-            var toGoWithUnit = $(this).find('input[name="toGoWith_unit[]"]').val();
-            sideData.push({
-                name: toGoWithName,
-                price: toGoWithPrice,
-                image: toGoWithImage,
-                unit: toGoWithUnit
-            });
-        });
-
-        var flavourData = [];
-        $('#flavours-list .flavour-row').each(function() {
-            var flavourName = $(this).find('input[name="flavour_name[]"]').val();
-            var flavourPrice = $(this).find('input[name="flavour_price[]"]').val();
-            flavourData.push({ name: flavourName, price: flavourPrice });
-        });
-
-        var formData = new FormData(this);
-        formData.append("sizeData", JSON.stringify(sizeData));
-        formData.append("ingredientData", JSON.stringify(ingredientData));
-        formData.append("sideData", JSON.stringify(sideData));
-        formData.append("flavourData", JSON.stringify(flavourData));
-        formData.append("toGoWithData", JSON.stringify(toGoWithData));
-
-        var id = $('#productId').val();
-        var url = id ? `/public/admin/product/${id}` : '/public/admin/product';
-        var method = id ? 'PUT' : 'POST';
-
-        $.ajax({
-            url: url,
-            type: method,
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(response) {
-                $('#productModal').modal('hide');
-                table.ajax.reload();
-            },
-            error: function(xhr) {
-                var errors = xhr.responseJSON.errors;
-                var errorHtml = '<ul>';
-                for (var key in errors) {
-                    errors[key].forEach(function(error) {
-                        errorHtml += '<li>' + error + '</li>';
-                    });
-                }
-                errorHtml += '</ul>';
-                $('#categoryErrors').html(errorHtml).removeClass('d-none');
-            }
-        });
-    });
-
     // Reset form modal on hide
     $('#productModal').on('hidden.bs.modal', function() {
         $('#productForm')[0].reset();
         $('#categoryErrors').addClass('d-none');
         $('#productId').val('');
-    });
-
-    // Handle category change and sub-category population
-    $('#category').change(function() {
-        if ($(this).val()) {
-            $('#sub_category').empty();
-            $('#sub_category').append(`<option value="" selected>Select Sub Category</option>`);
-            $.ajax({
-                url: '/public/admin/sub-categories/' + $(this).val(),
-                method: 'GET',
-                success: function(data) {
-                    data?.categories?.map(item => {
-                        $('#sub_category').append(`<option value="${item?.id}">${item?.name}</option>`);
-                    });
-                },
-                error: function(error) {
-                    console.log('Error fetching category data:', error);
-                }
-            });
-        } else {
-            console.log("No category selected");
-        }
     });
 
     // Initialize DataTable
@@ -510,7 +279,7 @@ $(document).ready(function() {
         serverSide: true,
         stateSave: true,
         ajax: {
-            url: "/public/admin/productList",
+            url: "/admin/productList",
             type: "GET",
             dataSrc: function(json) {
                 return json.products;
@@ -520,7 +289,7 @@ $(document).ready(function() {
             title: 'Thumbnail',
             data: 'main_img',
             render: function(data) {
-                return data ? `<img style="height:40px" src="{{ url('/') }}/${data}" />` : '';
+                return data ? `<img style="height:40px" src="{{ url('/') }}/storage/${data}" />` : '';
             }
         }, {
             title: 'Name',
@@ -528,29 +297,352 @@ $(document).ready(function() {
             render: function(data) {
                 return `<span class="text-dark">${data}</span>`;
             }
-        }, {
-            title: 'Price',
-            data: 'price',
+        }, 
+        {
+            title: 'Sandwich Price',
+            data: 'sandwich_price',
+            render: function(data) {
+                return data ? `<span class="badge bg-warning">₱${data}</span>` : '';
+            }
+        }, 
+        {
+            title: 'Meal Price',
+            data: 'meal_price',
             render: function(data) {
                 return data ? `<span class="badge bg-primary">₱${data}</span>` : '';
             }
-        }, {
+        }, 
+        {
             title: 'Action',
             data: 'id',
             render: function(data, type, row) {
-                return `<button class="btn btn-sm btn-success" data-id="${data}" onclick="editProduct(${data})"><i class="bi bi-pencil"></i></button>`;
+                return `<button class="btn btn-sm btn-primary " onclick="viewProduct(${data}, 'edit')"><i class="bi bi-eye text-white"></i></button>
+                        <button class="btn btn-sm btn-success " onclick="productDetail(${data}, 'edit')"><i class="bi bi-pencil text-white"></i></button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteProduct(${data})"> <i class="bi bi-trash"></i> </button>`;
             }
         }]
     });
 
-});
-$('#sidesInToGoWith').on('change', function() {
-    if ($(this).prop('checked')) {  // Check if the checkbox is checked
-        $('#numberSidesInToGoWith').show();  // Show the element if checked numberSidesInToGoWith
-    } else {
-        $('#numberSidesInToGoWith').hide();  // Hide the element if unchecked
+    $('#sides').select2({
+    placeholder: 'Choose Sides',
+    dropdownParent: $('#productModal'),
+    width: '100%',
+    multiple: true,
+    allowClear: true,
+    ajax: {
+        url: '/admin/sideList',  // The route to fetch data
+        dataType: 'json',
+        delay: 250, // Delay for better performance
+        data: function (params) {
+            return {
+                search: params.term // Search query
+            };
+        },
+        processResults: function (data) {
+            console.log('Fetched Data:', data);
+            
+            return {
+                results: $.map(data?.data, function (item) {
+                    return {
+                        id: item?.id,
+                        text: item?.name,  // Main text
+                        image: '/storage/'+item?.image // Image URL from API
+                    };
+                })
+            };
+        },
+        cache: true
+    },
+    templateResult: function (item) {
+        if (!item.id) {
+            return item.text; // Show only text for placeholder
+        }
+        
+        var img = item.image ? `<img src="${item.image}" class="select2-img" />` : '';
+        return $(`<span>${img} ${item.text}</span>`);
+    },
+    templateSelection: function (item) {
+        var img = item.image ? `<img src="${item.image}" class="select2-img-selected" />` : '';
+        return $(`<span>${img} ${item.text}</span>`);
     }
 });
+
+$('#category').select2({
+    placeholder: 'Choose Category',
+    dropdownParent: $('#productModal'), // Ensures proper dropdown behavior inside modal
+    width: '100%',
+    allowClear: true,
+    ajax: {
+        url: '/admin/categoryList',  // The route to fetch categories
+        dataType: 'json',
+        delay: 250, // Delay for better performance
+        data: function (params) {
+            return {
+                search: params.term // Search query for filtering
+            };
+        },
+        processResults: function (data) {
+            console.log('Fetched Categories:', data);
+            
+            return {
+                results: $.map(data?.categories, function (item) {
+                    return {
+                        id: item?.id,
+                        text: item?.category_name, // Category name from the database
+                        image: '/storage/' + item?.category_img // Category image URL (optional)
+                    };
+                })
+            };
+        },
+        cache: true
+    },
+    templateResult: function (item) {
+        if (!item.id) {
+            return item.text; // Show only text for placeholder
+        }
+
+        var img = item.image ? `<img src="${item.image}" class="select2-img" />` : '';
+        return $(`<span>${img} ${item.text}</span>`);
+    },
+    templateSelection: function (item) {
+        var img = item.image ? `<img src="${item.image}" class="select2-img-selected" />` : '';
+        return $(`<span>${img} ${item.text}</span>`);
+    }
+});
+
+});
+
+$('#has_sides').on('change', function() {
+    if ($(this).prop('checked')) {  // Check if the checkbox is checked
+        $('#sidesRow').show();  // Show the element if checked number has_sides
+    } else {
+        $('#sidesRow').hide();  // Hide the element if unchecked
+    }
+});
+
+
+// category_id
+// deal_of_the_day
+// description
+// id
+// img_1
+// img_2
+// img_3
+// main_img
+// meal_price
+// product_name
+// sandwich_price
+// send_notification
+// status
+// stock
+
+function productDetail(id, action) {
+    $('#productModal').modal('show');
+    $('#name').val('');
+    $('#sandwich_price').val(0);
+    $('#meal_price').val(0);
+    $('#description').val('');
+    $('#stock').prop('checked',true);
+    $('#has_sides').prop('checked',false);
+    $('#send_notification').prop('checked',true);
+    $('#deal_of_the_day').prop('checked',true);
+
+    if (action === 'edit') {
+        $.ajax({
+            url: `/admin/product/${id}`,
+            type: 'GET',
+            success: function(response) {
+                let product = response?.data;
+
+                $('#name').val(product?.product_name);
+                $('#sandwich_price').val(product?.sandwich_price);
+                $('#meal_price').val(product?.meal_price);
+                $('#description').val(product?.description);
+                $('#stock').prop('checked',product?.stock);
+                $('#send_notification').prop('checked',product?.send_notification);
+                $('#deal_of_the_day').prop('checked',product?.deal_of_the_day);
+                $('#has_sides').prop('checked',product?.has_sides);
+                
+                if (product?.has_sides) {
+                    $('#has_sides').prop('checked', true);
+                    $('#sidesRow').slideDown(); // Smoothly show the row
+                    $('#free_sides').val(product?.number_of_free_sides ?? 0); 
+                } else {
+                    $('#has_sides').prop('checked', false);
+                    $('#sidesRow').slideUp(); // Smoothly hide the row
+                    $('#free_sides').val(''); // Clear the input field
+                }
+
+                if (product?.category_id) {
+    $.ajax({
+        url: '/admin/categoryList', // API Endpoint
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            console.log('Fetched Categories:', response); 
+
+            let categoryList = response?.categories?.map(item => ({
+                id: item.id,
+                text: item.category_name,
+                image: '/storage/' + item?.category_img // Image URL
+            })) || [];
+
+            // Initialize Select2 with custom template for images
+            $('#category').select2({
+                placeholder: 'Choose Category',
+                dropdownParent: $('#productModal'),
+                width: '100%',
+                allowClear: true,
+                data: categoryList,
+                templateResult: function(item) {
+                    if (!item.id) {
+                        return item.text; // Show only text for placeholder
+                    }
+
+                    var img = item.image ? `<img src="${item.image}" class="select2-img" style="width: 30px; height: 30px; margin-right: 10px; border-radius: 50%;" />` : '';
+                    return $(`<span>${img} ${item.text}</span>`);
+                },
+                templateSelection: function(item) {
+                    var img = item.image ? `<img src="${item.image}" class="select2-img-selected" style="width: 20px; height: 20px; margin-right: 5px; border-radius: 50%;" />` : '';
+                    return $(`<span>${img} ${item.text}</span>`);
+                }
+            });
+
+            // Set selected category (if applicable)
+            $('#category').val(product.category_id).trigger('change.select2');
+        },
+        error: function(xhr) {
+            console.error('Error fetching categories:', xhr.responseText);
+        }
+    });
+}
+
+            },
+            error: function(xhr) {
+                console.error('Error fetching product details:', xhr.responseText);
+            }
+        });
+    }
+}
+
+$('#productForm').submit(function (e) {
+        e.preventDefault();
+
+        let id = $('#productId').val();
+        let formData = new FormData(this);
+        let url = id ? `/admin/product/${id}` : `/admin/product-create`;
+
+        // Reset validation messages
+        $('.form-control').removeClass('is-invalid is-valid');
+        $('.invalid-feedback').remove();
+
+        // Append CSRF token
+        formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
+        if (id) {
+            formData.append('_method', 'PUT');
+        }
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                $('#productModal').modal('hide');
+                location.reload(); // Reload data dynamically if needed
+            },
+            error: function (xhr) {
+                if (xhr.status === 422) {
+                    let errors = xhr.responseJSON.errors;
+
+                    $.each(errors, function (key, messages) {
+                        let inputField = $('[name="' + key + '"]');
+                        inputField.addClass('is-invalid');
+                        inputField.after(`<div class="invalid-feedback">${messages[0]}</div>`);
+                    });
+                } else {
+                    console.error(xhr.responseText);
+                }
+            }
+        });
+    });
+
+
+
+
+    function deleteProduct(id) {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+        
+        if (result.value) {
+            $.ajax({
+                url: `/admin/product/${id}`,
+                type: "DELETE",
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr("content")
+                },
+                success: function (response) {
+                    $('#productsTable').DataTable().ajax.reload(null, false);
+                    Swal.fire({
+                        title: "Deleted!",
+                        text: "Product has been deleted.",
+                        icon: "success",
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                    
+                    // Remove product row dynamically
+                    $(`#productRow-${id}`).fadeOut(500, function () {
+                        $(this).remove();
+                    });
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Something went wrong.",
+                        icon: "error"
+                    });
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+    });
+}
+
+function viewProduct(id){
+    $('#viewProductModal').modal('show');
+
+    $.ajax({
+            url: `/admin/product/${id}`,
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                console.log(response); // Log response to see the data
+                $('#productName').text(response?.data?.product_name);
+                $('#productStatus').html(`${response?.data?.status?'Active <i class="bi bi-check-circle-fill text-success"></i>':'In-Active <i class="bi bi-x-circle-fill text-danger"></i>'}`);
+                $('#sandwichPrice').text(response?.data?.sandwich_price);
+                $('#mealPrice').text(response?.data?.meal_price);
+                $('#productImage').html(`<img class="card" src='{{url('/')}}/storage/${response?.data?.main_img}' style="hieght:100px; width:100px" />`);
+                $('#productCategory').html(response?.data?.category?.category_name);
+                $('#img1').attr('src', `{{url('/')}}/storage/${response?.data?.img_1}`);
+                $('#img2').attr('src', `{{url('/')}}/storage/${response?.data?.img_2}`);
+                $('#img3').attr('src', `{{url('/')}}/storage/${response?.data?.img_3}`);
+
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+                alert("Error fetching product!");
+            }
+        });
+}
 
 </script>
 
