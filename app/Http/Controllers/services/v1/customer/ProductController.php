@@ -10,19 +10,30 @@ use App\Models\FavoriteProduct;
 use Illuminate\Support\Facades\DB;
 use App\Notifications\FirebaseNotification;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 
 
 class ProductController extends Controller
 {
-    public function PrductDetails(Request $request, $product)
-    {
-        $product = Product::with(['sizes','flavours','ingredients','sides'])->findOrFail($product);    
-        return response()->json([
-            'data' => $product,
-            'status' => 'success'
-        ]);
-    }
+public function prductDetails(Request $request, $product)
+{
+    $product = Product::findOrFail($product);
+
+    // Append full URLs for images
+    $baseUrl = asset('storage/'); // If using Laravel's storage
+
+    $product->main_img = $baseUrl . '/' . $product->main_img;
+    $product->img_1 = $baseUrl . '/' . $product->img_1;
+    $product->img_2 = $baseUrl . '/' . $product->img_2;
+    $product->img_3 = $baseUrl . '/' . $product->img_3;
+
+    return response()->json([
+        'data' => $product,
+        'status' => 'success'
+    ]);
+}
+
     
     public function ProductsByCategory(Request $request, $category, $subcategory = 0)
     {
@@ -37,15 +48,19 @@ class ProductController extends Controller
         ]);
     }
 
-    public function DealOfTheDayProductList(Request $request)
+   public function DealOfTheDayProductList(Request $request)
     {
-        $products = Product::where('deal_of_the_day', 1)->get();
-    
+        $products = Product::where('deal_of_the_day', 1)->get()->map(function ($product) {
+            $product->main_img = $product->main_img ? Storage::url($product->main_img) : null;
+            return $product;
+        });
+
         return response()->json([
             'data' => $products,
             'status' => 'success'
         ]);
     }
+
 
     public function CartProducts(Request $request)
     {

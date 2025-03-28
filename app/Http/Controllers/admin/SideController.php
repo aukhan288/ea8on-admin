@@ -16,15 +16,17 @@ class SideController extends Controller
     }
 
     // Get the list of sides (AJAX endpoint)
-    public function getSides(Request $request)
-    {
-        $sides = Side::all();
+   public function getSides(Request $request)
+{
+    $sides = Side::all()->map(function ($side) {
+        $side->image = $side->image ? Storage::url($side->image) : null;
+        return $side;
+    });
 
-        // Return the data in a format suitable for DataTable (JSON)
-        return response()->json([
-            'data' => $sides
-        ]);
-    }
+    return response()->json([
+        'data' => $sides
+    ]);
+}
 
     // Show the details of a single side
     public function show($id)

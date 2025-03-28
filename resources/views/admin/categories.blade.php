@@ -222,6 +222,10 @@ function categoryDetail(id, action) {
     $('#category_img_1').val('');
     $('#category_img_2').val('');
     $('#category_img_3').val('');
+    $('#category_img_preview').html('');
+    $('#category_img_1_preview').html('');
+    $('#category_img_2_preview').html('');
+    $('#category_img_3_preview').html('');
 
     if (action === 'edit') {
         $.ajax({

@@ -102,7 +102,7 @@ $(document).ready(function() {
                 title: 'Image',
                 data: 'image',
                 render: function(data) {
-                    return data ? `<img src="/storage/${data}" style="height: 40px; width: 40px; border-radius: 50%;">` : 'No Image';
+                    return data ? `<img src="${data}" style="height: 40px; width: 40px; border-radius: 50%;">` : 'No Image';
                 }
             },
             { 'title': 'Name', 'data': 'name' },
@@ -207,7 +207,7 @@ function sideDetail(id, action) {
 $('#sideForm').submit(function (e) {
     e.preventDefault();
 
-    let id = $('input[name="id"]').val();
+    let id = $('#sideId').val();
     let formData = new FormData(this);
     let url = id ? `/admin/sides/${id}` : `/admin/side-create`;
 
