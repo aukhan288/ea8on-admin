@@ -55,23 +55,24 @@
             <div class="modal-body">
                 <form id="productForm" action="" method="POST" enctype="multipart/form-data">
                     @csrf
+                    <input type="hidden" id="productId" name="id" />
                             <div class="row">
                         <div class="col-sm-6">
                             <div class="mb-3">
                                 <label for="name" class="form-label">Product Name</label>
-                                <input type="text" class="form-control" id="name" name="name" required>
+                                <input type="text" class="form-control" id="name" name="name" >
                             </div>
                         </div>
                         <div class="col-sm-3">
                             <div class="mb-3">
                                 <label for="price" class="form-label">Sandwich Price</label>
-                                <input type="number" step="any" class="form-control" id="sandwich_price" name="sandwich_price" required>
+                                <input type="number" step="any" class="form-control" id="sandwich_price" name="sandwich_price" >
                             </div>
                         </div>
                         <div class="col-sm-3">
                         <div class="mb-3">
                                 <label for="discount" class="form-label">Meal Price</label>
-                                <input type="number" step="any" class="form-control" id="meal_price" name="meal_price" required>
+                                <input type="number" step="any" class="form-control" id="meal_price" name="meal_price" >
                             </div>
                         </div>
                     </div>
@@ -94,6 +95,7 @@
                                     </label>
                                 </div>
                          </div>
+                       
                         </div>           
                     </div>
                     <div class="row" id="sidesRow" style="display:none">
@@ -120,8 +122,8 @@
                         <div class="col-sm-4 ">
                          <div class="mb-3">
                              <label for="main_img" class="form-label">Product Image</label>
-                             <input type="file" class="form-control" name="main_img[]" value=""
-                                placeholder="Chose Image" required>
+                             <input type="file" class="form-control" name="main_img" value=""
+                                placeholder="Chose Image" >
                          </div>
                          <div id="imagePreviewContainer" class="mb-3" style="display: none;">
                             <img id="imagePreview" src="" alt="Image Preview" style="width: 100%; height: 200px;" />
@@ -132,22 +134,22 @@
                     <div class="col-sm-4">
                         <div class="mb-3">
                              <label for="img_1" class="form-label">Slider One</label>
-                             <input type="file" class="form-control" name="img_1[]" value=""
-                                placeholder="Chose Image" required>
+                             <input type="file" class="form-control" name="img_1" value=""
+                                placeholder="Chose Image" >
                          </div>
                         </div>
                         <div class="col-sm-4">
                          <div class="mb-3">
                              <label for="img_2" class="form-label">Slider Two</label>
-                             <input type="file" class="form-control" name="img_2[]" value=""
-                                placeholder="Chose Image" required>
+                             <input type="file" class="form-control" name="img_2" value=""
+                                placeholder="Chose Image" >
                          </div>
                         </div>
                         <div class="col-sm-4">
                         <div class="mb-3">
                              <label for="img_3" class="form-label">Slider Three</label>
-                             <input type="file" class="form-control" name="img_3[]" value=""
-                                placeholder="Chose Image" required>
+                             <input type="file" class="form-control" name="img_3" value=""
+                                placeholder="Chose Image" >
                          </div>
                         </div>
                     </div>
@@ -192,7 +194,44 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-sm-3">
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="1" id="has_flavours"
+                                        name="has_flavours">
+                                    <label class="form-check-label ms-2" for="has_flavours">
+                                        Add Flavours
+                                    </label>
+                         </div>
+                            </div>
+                        </div>
                     </div>
+                 <div id="flavourContainer">
+                    <div id="flavourSection">
+                    
+                    </div>
+                        <div class="row mb-2">
+                            <div class="col-sm-4">
+                                <input class="form-control" name="flavours[]" placeholder="Enter flavour name"/>
+                            </div>
+                            <div class="col-sm-2">
+                        <input class="form-control" name="price[]" step="any" placeholder="Enter price name"/>
+                    </div>
+                    <div class="col-sm-2">
+                         <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="1" id="stock"
+                                        name="stock[]" checked>
+                                    <label class="form-check-label ms-2" for="stock">
+                                        Stock
+                                    </label>
+                         </div>
+                    </div>
+                            <div class="col-sm-2">
+                                <button type="button" id="flavour" class="btn btn-sm btn-success"><i class="bi-plus-lg"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                                    
                     </div>
 
                     <div class="modal-footer">
@@ -210,19 +249,19 @@
     <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered " role="document">
         <div class="modal-content" style="min-height: 80vh !important;">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalTitleId">Add New Product</h5>
+                <h5 class="modal-title" id="modalTitleId">Product</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                     <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-sm-8">
                        <p><strong>Name:</strong> <span id="productName"></span></p>
                        <p><strong>Status:</strong> <span id="productStatus"></span></p>
                        <p><strong>Sandwich Price: </strong> <span id="sandwichPrice"></span></p>
                        <p><strong>Meal Price: </strong> <span id="mealPrice"></span></p>
                        <p><strong>Category: </strong> <span id="productCategory"></span></p>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <span id="productImage">
 
                         </span>
@@ -255,9 +294,11 @@
                         </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
+                    
+                    
+            </div>
+            <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    </div>
             </div>
         </div>
     </div>
@@ -266,6 +307,36 @@
 <script>
 $(document).ready(function() {
     // Reset form modal on hide
+       $("#flavour").click(function () {
+            let newRow = `
+                <div class="row mb-2">
+                    <div class="col-sm-4">
+                        <input class="form-control" name="flavours[]" placeholder="Enter flavour name"/>
+                    </div>
+                    <div class="col-sm-2">
+                        <input class="form-control" name="price[]" step="any" placeholder="Enter price name"/>
+                    </div>
+                    <div class="col-sm-2">
+                         <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="1" id="stock"
+                                        name="stock[]" checked>
+                                    <label class="form-check-label ms-2" for="stock">
+                                        Stock
+                                    </label>
+                         </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <button type="button" class="btn btn-sm btn-danger removeRow"><i class="bi-x"></i></button>
+                    </div>
+                </div>`;
+
+            $("#flavourSection").append(newRow);
+        });
+
+        // Remove row on button click
+        $(document).on("click", ".removeRow", function () {
+            $(this).closest(".row").remove();
+        });
     $('#productModal').on('hidden.bs.modal', function() {
         $('#productForm')[0].reset();
         $('#categoryErrors').addClass('d-none');
@@ -419,31 +490,28 @@ $('#has_sides').on('change', function() {
         $('#sidesRow').hide();  // Hide the element if unchecked
     }
 });
+$('#has_flavours').on('change', function() {
+
+    if ($(this).prop('checked')) {  // Check if the checkbox is checked
+        $('#flavourContainer').show();  // Show the element if checked number has_sides
+    } else {
+        $('#flavourContainer').hide();  // Hide the element if unchecked
+    }
+});
 
 
-// category_id
-// deal_of_the_day
-// description
-// id
-// img_1
-// img_2
-// img_3
-// main_img
-// meal_price
-// product_name
-// sandwich_price
-// send_notification
-// status
-// stock
+
 
 function productDetail(id, action) {
     $('#productModal').modal('show');
+    $('#productId').val();
     $('#name').val('');
-    $('#sandwich_price').val(0);
-    $('#meal_price').val(0);
+    $('#sandwich_price').val();
+    $('#meal_price').val();
     $('#description').val('');
     $('#stock').prop('checked',true);
     $('#has_sides').prop('checked',false);
+    $('#has_flavours').prop('checked',false);
     $('#send_notification').prop('checked',true);
     $('#deal_of_the_day').prop('checked',true);
 
@@ -453,7 +521,7 @@ function productDetail(id, action) {
             type: 'GET',
             success: function(response) {
                 let product = response?.data;
-
+                $('#productId').val(id);
                 $('#name').val(product?.product_name);
                 $('#sandwich_price').val(product?.sandwich_price);
                 $('#meal_price').val(product?.meal_price);
@@ -461,12 +529,85 @@ function productDetail(id, action) {
                 $('#stock').prop('checked',product?.stock);
                 $('#send_notification').prop('checked',product?.send_notification);
                 $('#deal_of_the_day').prop('checked',product?.deal_of_the_day);
-                $('#has_sides').prop('checked',product?.has_sides);
+                $('#has_flavours').prop('checked',product?.has_flavours);
                 
-                if (product?.has_sides) {
-                    $('#has_sides').prop('checked', true);
-                    $('#sidesRow').slideDown(); // Smoothly show the row
-                    $('#free_sides').val(product?.number_of_free_sides ?? 0); 
+                if (product?.has_flavours) {
+                    $('#has_flavours').prop('checked', true);
+                    $('#flavoursRow').slideDown(); // Smoothly show the row
+
+                    $('#sides').select2({
+    placeholder: 'Choose Sides',
+    dropdownParent: $('#productModal'),
+    width: '100%',
+    multiple: true,
+    allowClear: true,
+    ajax: {
+        url: '/admin/sideList',  // Fetch available sides dynamically
+        dataType: 'json',
+        delay: 250,
+        data: function (params) {
+            return {
+                search: params.term
+            };
+        },
+        processResults: function (data) {
+            return {
+                results: $.map(data?.data, function (item) {
+                    return {
+                        id: item?.id,
+                        text: item?.name,
+                        image: '/storage/' + item?.image // Attach image for selection
+                    };
+                })
+            };
+        },
+        cache: true
+    },
+    templateResult: function (item) {
+        if (!item.id) return item.text; // Handle placeholder
+        var img = item.image ? `<img src="${item.image}" class="select2-img" style="width: 30px; height: 30px; margin-right: 5px;"/>` : '';
+        return $(`<span>${img} ${item.text}</span>`);
+    },
+    templateSelection: function (item) {
+        if (!item.id) return item.text; // Handle empty selection
+
+        // Ensure the image is set properly
+        var img = item.image ? `<img src="${item.image}" class="select2-img-selected" style="width: 20px; height: 20px; margin-right: 5px;"/>` : '';
+        return $(`<span>${img} ${item.text}</span>`);
+    }
+});
+
+// **Pre-selecting Sides with Image Support**
+if (product?.sides?.length > 0) {
+    let selectedSides = product.sides.map(side => ({
+        id: side.id,
+        text: side.name,
+        image: '/storage/' + side.image
+    }));
+
+    let selectedIds = selectedSides.map(side => side.id);
+
+    // Preload selected items properly
+    selectedSides.forEach(side => {
+        let option = new Option(side.text, side.id, true, true);
+        $(option).data('image', side.image); // Store image for reference
+        $('#sides').append(option);
+    });
+
+    // Apply selection and trigger update
+    $('#sides').val(selectedIds).trigger('change');
+
+    // Force select2 to refresh selection UI with images
+    selectedSides.forEach(side => {
+        $('#sides').trigger({
+            type: 'select2:select',
+            params: { data: side }
+        });
+    });
+}
+
+
+
                 } else {
                     $('#has_sides').prop('checked', false);
                     $('#sidesRow').slideUp(); // Smoothly hide the row
@@ -526,52 +667,68 @@ function productDetail(id, action) {
 }
 
 $('#productForm').submit(function (e) {
-        e.preventDefault();
+    e.preventDefault();
 
-        let id = $('#productId').val();
-        let formData = new FormData(this);
-        let url = id ? `/admin/product/${id}` : `/admin/product-create`;
+    let id = $('#productId').val();
+    let formData = new FormData(this);
+    let url = id ? `/admin/product/${id}` : `/admin/product-create`;
 
-        // Reset validation messages
-        $('.form-control').removeClass('is-invalid is-valid');
-        $('.invalid-feedback').remove();
+    // Reset previous validation messages
+    $('.form-control').removeClass('is-invalid is-valid');
+    $('.invalid-feedback').remove();
 
-        // Append CSRF token
-        formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
-        if (id) {
-            formData.append('_method', 'PUT');
-        }
+    // Append CSRF token
+    formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
+    if (id) {
+        formData.append('_method', 'PUT');
+    }
 
-        $.ajax({
-            url: url,
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                $('#productModal').modal('hide');
-                location.reload(); // Reload data dynamically if needed
-            },
-            error: function (xhr) {
-                if (xhr.status === 422) {
-                    let errors = xhr.responseJSON.errors;
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+            $('#productModal').modal('hide');
+            location.reload(); // Refresh data dynamically if needed
+        },
+        error: function (xhr) {
+            if (xhr.status === 422) {
+                let errors = xhr.responseJSON.errors;
 
-                    $.each(errors, function (key, messages) {
-                        let inputField = $('[name="' + key + '"]');
-                        inputField.addClass('is-invalid');
-                        inputField.after(`<div class="invalid-feedback">${messages[0]}</div>`);
-                    });
-                } else {
-                    console.error(xhr.responseText);
+                $.each(errors, function (key, messages) {
+                    let inputField = $(`[name="${key}"]`);
+                    
+                    // If input is inside a group, find the correct field
+                    let parentGroup = inputField.closest('.form-group, .input-group');
+                    
+                    inputField.addClass('is-invalid');
+                    
+                    // Remove old error message before appending a new one
+                    parentGroup.find('.invalid-feedback').remove();
+                    
+                    // Append validation message
+                    inputField.after(`<div class="invalid-feedback">${messages[0]}</div>`);
+                });
+
+                // Scroll to the first invalid input for better UX
+                let firstInvalidInput = $('.is-invalid').first();
+                if (firstInvalidInput.length) {
+                    $('html, body').animate({ scrollTop: firstInvalidInput.offset().top - 100 }, 500);
                 }
+            } else {
+                console.error(xhr.responseText);
             }
-        });
+        }
     });
+});
 
 
 
 
-    function deleteProduct(id) {
+
+function deleteProduct(id) {
     Swal.fire({
         title: "Are you sure?",
         text: "You won't be able to revert this!",
@@ -630,7 +787,7 @@ function viewProduct(id){
                 $('#productStatus').html(`${response?.data?.status?'Active <i class="bi bi-check-circle-fill text-success"></i>':'In-Active <i class="bi bi-x-circle-fill text-danger"></i>'}`);
                 $('#sandwichPrice').text(response?.data?.sandwich_price);
                 $('#mealPrice').text(response?.data?.meal_price);
-                $('#productImage').html(`<img class="card" src='{{url('/')}}/storage/${response?.data?.main_img}' style="hieght:100px; width:100px" />`);
+                $('#productImage').html(`<img class="card ms-auto" src='{{url('/')}}/storage/${response?.data?.main_img}' style="hieght:140px; width:140px" />`);
                 $('#productCategory').html(response?.data?.category?.category_name);
                 $('#img1').attr('src', `{{url('/')}}/storage/${response?.data?.img_1}`);
                 $('#img2').attr('src', `{{url('/')}}/storage/${response?.data?.img_2}`);

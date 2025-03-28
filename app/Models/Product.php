@@ -10,8 +10,12 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = [
-        'category_name',
-        'category_img',
+        'product_name',
+        'category_id',
+        'description',
+        'sandwich_price',
+        'stock',
+        'main_img',
         'category_img_1',
         'category_img_2',
         'category_img_3',
@@ -22,6 +26,10 @@ class Product extends Model
     public function sides()
     {
         return $this->belongsToMany(Side::class, 'product_sides')->withTimestamps();
+    }
+    public function flavours()
+    {
+        return $this->hasMany(ProductFlavour::class)->withTimestamps();
     }
 
     public function category()

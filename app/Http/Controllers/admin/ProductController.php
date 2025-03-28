@@ -30,8 +30,9 @@ class ProductController extends Controller
     public function show($id)
     {
         $product = Product::with([
-            'sides', 
-            'category:id,category_name,category_img'
+            // 'sides', 
+            'category:id,category_name,category_img',
+            'flavours'
         ])->find($id);
     
         if (!$product) {
@@ -49,125 +50,127 @@ class ProductController extends Controller
     
     public function store(Request $request)
     {
-        
+        // Validate request
         $request->validate([
             'name' => 'required|string|max:255',
             'sandwich_price' => 'required|numeric',
-            'meal_price' => 'required|numeric',
+            'meal_price' => 'nullable|numeric',
             'category_id' => 'required|exists:categories,id',
-            'main_img.*' => 'image|mimes:jpeg,png,jpg|max:2048', // Validate main image
-            'img_1.*' => 'image|mimes:jpeg,png,jpg|max:2048', // Validate additional images
-            'img_2.*' => 'image|mimes:jpeg,png,jpg|max:2048',
-            'img_3.*' => 'image|mimes:jpeg,png,jpg|max:2048',
+            // 'main_img' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            // 'img_1' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            // 'img_2' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            // 'img_3' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'description' => 'nullable|string',
+            'sides' => 'nullable|array',
+            'sides.*' => 'exists:sides,id',
+            'flavours' => 'nullable|array',
+            'flavours.*' => 'string|max:255',
+            'price' => 'nullable|array',
+            'price.*' => 'numeric|min:0',
+            'stock' => 'nullable|array',
+            'stock.*' => 'integer|min:0',
         ]);
     
         // Create new product
-        $product = new Product();
-        $product->product_name = $request->name;
-        $product->sandwich_price = $request->sandwich_price;
-        $product->meal_price = $request->meal_price;
-        $product->category_id = $request->category_id;
-        $product->description = $request->description;
-        $product->stock = $request->out_of_stock ?? 0;
-        $product->send_notification = $request->send_notification ?? 0;
-        $product->deal_of_the_day = $request->deal_of_the_day ?? 0;
-        $product->has_sides = $request->has_sides ?? 0;
-       
-        
-        // Store Main Image
-        if ($request->hasFile('main_img')) {
-            $product->main_img  = $request->file('main_img')[0]->store('images/products', 'public');
-        }
-        if ($request->hasFile('img_1')) {
-            $product->img_1 = $request->file('img_1')[0]->store('images/products', 'public');
-        }
-        if ($request->hasFile('img_2')) {
-            $product->img_2 = $request->file('img_2')[0]->store('images/products', 'public');
-        }
-        if ($request->hasFile('img_3')) {
-            $product->img_3 = $request->file('img_3')[0]->store('images/products', 'public');
+        $product = Product::create([
+            'product_name' => $request->name,
+            'sandwich_price' => $request->sandwich_price,
+            'meal_price' => $request->meal_price,
+            'category_id' => $request->category_id,
+            'description' => $request->description,
+            'stock' => $request->has('stock') ? 1 : 0, // ✅ FIXED
+            'send_notification' => $request->send_notification ?? 0,
+            'deal_of_the_day' => $request->deal_of_the_day ?? 0,
+            'has_sides' => $request->has_sides ?? 0,
+            'has_flavours' => $request->has_flavours ?? 0,
+        ]);
+    
+        // Handle images
+        $imageFields = ['main_img', 'img_1', 'img_2', 'img_3'];
+        foreach ($imageFields as $field) {
+            if ($request->hasFile($field)) {
+                $product->$field = $request->file($field)->store('images/products', 'public');
+            }
         }
         $product->save();
-
-     
-        if ($product->has_sides) {
-            $product->sides()->sync(request('sides')); // Sync sides from request
+    
+        // Sync sides
+        if ($product->has_sides && $request->has('sides')) {
+            $product->sides()->sync($request->sides);
         }
-        
+    
+        // Store flavours with prices & stock
+        if ($product->has_flavours && $request->has('flavours') && $request->has('price') && $request->has('stock')) {
+            foreach ($request->flavours as $index => $flavour) {
+                ProductFlavour::create([  // ✅ Explicit model usage
+                    'product_id' => $product->id, // ✅ Associate flavour with product
+                    'title' => $flavour,
+                    'price' => $request->price[$index] ?? 0,
+                    'stock' => $request->stock[$index] ?? 0,
+                ]);
+            }
+        }
+    
         return response()->json([
             'message' => 'Product saved successfully',
             'product' => $product
         ], 201);
     }
+    
+    
+    
+
 
     public function update(Request $request, $id)
-    {
-        $product = Product::find($id);
+{
+    $product = Product::find($id);
 
-        if (!$product) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Product not found'
-            ], 404);
-        }
-
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'sandwich_price' => 'required|numeric',
-            'meal_price' => 'required|numeric',
-            'category_id' => 'required|exists:categories,id',
-            'main_img' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'img_1' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'img_2' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'img_3' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'description' => 'nullable|string',
-        ]);
-
-        // Update product details
-        $product->product_name = $request->name;
-        $product->sandwich_price = $request->sandwich_price;
-        $product->meal_price = $request->meal_price;
-        $product->category_id = $request->category_id;
-        $product->description = $request->description;
-        $product->stock = $request->out_of_stock ?? 0;
-        $product->send_notification = $request->send_notification ?? 0;
-        $product->deal_of_the_day = $request->deal_of_the_day ?? 0;
-        $product->has_sides = $request->has_sides ?? 0;
-
-        // Handle images
-        if ($request->hasFile('main_img')) {
-            Storage::disk('public')->delete($product->main_img); // Delete old image
-            $product->main_img = $request->file('main_img')->store('images/products', 'public');
-        }
-        if ($request->hasFile('img_1')) {
-            Storage::disk('public')->delete($product->img_1);
-            $product->img_1 = $request->file('img_1')->store('images/products', 'public');
-        }
-        if ($request->hasFile('img_2')) {
-            Storage::disk('public')->delete($product->img_2);
-            $product->img_2 = $request->file('img_2')->store('images/products', 'public');
-        }
-        if ($request->hasFile('img_3')) {
-            Storage::disk('public')->delete($product->img_3);
-            $product->img_3 = $request->file('img_3')->store('images/products', 'public');
-        }
-
-        $product->save();
-
-        // Sync product sides if applicable
-        if ($product->has_sides) {
-            $product->sides()->sync($request->sides ?? []);
-        } else {
-            $product->sides()->detach();
-        }
-
+    if (!$product) {
         return response()->json([
-            'success' => true,
-            'message' => 'Product updated successfully',
-            'product' => $product
-        ], 200);
+            'success' => false,
+            'message' => 'Product not found'
+        ], 404);
     }
+
+    // ✅ Update product details, only if provided
+    if ($request->filled('name')) $product->product_name = $request->name;
+    if ($request->filled('sandwich_price')) $product->sandwich_price = $request->sandwich_price;
+    if ($request->filled('meal_price')) $product->meal_price = $request->meal_price;
+    if ($request->filled('description')) $product->description = $request->description;
+
+    $product->category_id = $request->category_id;
+    $product->stock = $request->out_of_stock ?? 0;
+    $product->send_notification = $request->send_notification ?? 0;
+    $product->deal_of_the_day = $request->deal_of_the_day ?? 0;
+    $product->has_sides = $request->has_sides ?? 0;
+    // ✅ Handle images safely
+    $imageFields = ['main_img', 'img_1', 'img_2', 'img_3'];
+    foreach ($imageFields as $field) {
+
+        
+        
+        if ($request[$field]) {
+            // if (!empty($product->$field)) {
+            //     Storage::disk('public')->delete($product->$field);
+            // }
+            
+            $product[$field] = $request[$field][0]->store('images/products', 'public');
+        }
+    }
+
+    $product->save();
+
+    // ✅ Sync sides efficiently
+    $product->sides()->sync($request->has_sides ? ($request->sides ?? []) : []);
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Product updated successfully',
+        'product' => $product
+    ], 200);
+}
+
+    
 
     
     public function destroy($id)

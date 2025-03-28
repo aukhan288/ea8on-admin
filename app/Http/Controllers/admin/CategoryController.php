@@ -67,7 +67,7 @@ class CategoryController extends Controller
             'name' => 'required|string|max:255',
             'category_img' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'category_img_1' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'category_img_2' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            // 'category_img_2' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'category_img_3' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'description' => 'nullable|string',
         ]);
